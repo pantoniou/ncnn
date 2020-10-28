@@ -156,7 +156,12 @@ configure_file(layer_shader_registry.h.in ${CMAKE_CURRENT_BINARY_DIR}/layer_shad
 configure_file(layer_shader_spv_data.h.in ${CMAKE_CURRENT_BINARY_DIR}/layer_shader_spv_data.h)
 configure_file(layer_shader_type_enum.h.in ${CMAKE_CURRENT_BINARY_DIR}/layer_shader_type_enum.h)
 
-add_library(ncnn STATIC ${ncnn_SRCS})
+if(BUILD_SHARED_LIBS)
+    # add shared library target
+    add_library(ncnn SHARED ${ncnn_SRCS})
+else()
+    add_library(ncnn STATIC ${ncnn_SRCS})
+endif()
 set_target_properties(ncnn PROPERTIES DEBUG_POSTFIX "d")
 
 if(NCNN_SIMPLESTL)
@@ -265,7 +270,9 @@ else()
     endif()
     # target_compile_options(ncnn PRIVATE -march=native)
     # set_target_properties(ncnn PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
-    target_compile_options(ncnn PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
+    if(NOT BUILD_SHARED_LIBS)
+        target_compile_options(ncnn PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
+    endif()
 endif()
 
 if(NCNN_DISABLE_RTTI)
