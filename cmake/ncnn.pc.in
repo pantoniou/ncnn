@@ -1,0 +1,10 @@
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+prefix=@CMAKE_INSTALL_PREFIX@
+
+Name: ncnn
+Description: ncnn is a high-performance neural network inference computing framework
+Version: @PROJECT_VERSION@
+URL: https://github.com/Tencent/ncnn
+Libs: -L${libdir} -lncnn @NCNN_DEP_LIBS@
+Cflags: -I${includedir} @NCNN_DEP_CFLAGS@

@@ -22,7 +22,12 @@ if(NOT CMAKE_VERSION VERSION_LESS "3.15")
     cmake_policy(SET CMP0091 NEW)
 endif()
 
-project(ncnn)
+if(NOT CMAKE_VERSION VERSION_LESS "3.02")
+    cmake_policy(SET CMP0048 NEW)
+    project(ncnn VERSION 1.0.0)	# version number
+else()
+    project(ncnn)
+endif()
 
 if(MSVC AND NOT CMAKE_VERSION VERSION_LESS "3.15")
     option(NCNN_BUILD_WITH_STATIC_CRT "Enables use of statically linked CRT for statically linked ncnn" OFF)
@@ -88,6 +93,12 @@ else()
     if(NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
         option(NCNN_AVX2 "optimize x86 platform with avx2" ON)
     endif()
+endif()
+
+if(LINUX)
+    option(NCNN_PKGCONFIG "Build and install pkgconfig support" ON)
+else()
+    option(NCNN_PKGCONFIG "Build and install pkgconfig support" OFF)
 endif()
 
 message(STATUS "Target arch: ${NCNN_TARGET_ARCH}")
@@ -165,6 +176,10 @@ if(NCNN_VULKAN)
     endif()
 endif()
 
+if(LINUX AND NCNN_PKGCONFIG)
+    include(GNUInstallDirs)
+endif()
+
 add_subdirectory(src)
 if(NCNN_BUILD_BENCHMARK)
     add_subdirectory(benchmark)
@@ -178,4 +193,60 @@ endif()
 if(NCNN_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+install(
+    EXPORT ncnn
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ncnn
+    NAMESPACE ncnn::
+    FILE ncnnTargets.cmake
+    )
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    "Config.cmake.in"
+    "ncnnConfig.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/ncnn"
+    PATH_VARS
+      CMAKE_INSTALL_LIBDIR
+    )
+
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/ncnnConfigVersion.cmake"
+    VERSION 1.0.0
+    COMPATIBILITY SameMajorVersion
+    )
+
+### Install Config and ConfigVersion files
+install(
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/ncnnConfig.cmake"
+          "${CMAKE_CURRENT_BINARY_DIR}/ncnnConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/ncnn"
+    )
+
+if(LINUX AND NCNN_PKGCONFIG)
+
+    # collect libraries
+    set(NCNN_DEP_LIBS "")
+    if(NCNN_OPENMP AND NCNN_SIMPLEOMP)
+        set(NCNN_DEP_LIBS "${NCNN_DEP_LIBS} -fopenmp")
+    endif()
+    if (NCNN_VULKAN)
+        set(NCNN_DEP_LIBS "${NCNN_DEP_LIBS} -lvulkan")
+        if(NCNN_SYSTEM_GLSLANG)
+            set(NCNN_DEP_LIBS "${NCNN_DEP_LIBS} -lglslang -lSPIRV")
+        endif()
+    endif()
+
+    # set(NCNN_DEP_LIBS "-fopenmp -lvulkan -lglslang -lSPIRV")
+    set(NCNN_DEP_CFLAGS "-pthread")
+
+    configure_file(
+        cmake/ncnn.pc.in
+        "${CMAKE_BINARY_DIR}/ncnn.pc"
+        @ONLY)
+    install(
+        FILES "${CMAKE_BINARY_DIR}/ncnn.pc"
+	DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+    )
 endif()
