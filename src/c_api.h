@@ -112,6 +112,9 @@ void ncnn_net_set_option(ncnn_net_t net, ncnn_option_t opt);
 int ncnn_net_load_param(ncnn_net_t net, const char* path);
 int ncnn_net_load_model(ncnn_net_t net, const char* path);
 
+int ncnn_net_load_param_mem(ncnn_net_t net, const void* mem);
+int ncnn_net_load_model_mem(ncnn_net_t net, const void* mem);
+
 int ncnn_net_get_layer_count(ncnn_net_t net);
 ncnn_layer_t ncnn_net_get_layer(ncnn_net_t net, int i);
 int ncnn_net_get_blob_count(ncnn_net_t net);

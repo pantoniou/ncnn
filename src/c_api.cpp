@@ -312,6 +312,26 @@ int ncnn_net_load_model(ncnn_net_t net, const char* path)
 #endif
 }
 
+int ncnn_net_load_param_mem(ncnn_net_t net, const void *mem)
+{
+#if NCNN_STDIO && NCNN_STRING
+    const unsigned char* _mem = (const unsigned char*)mem;
+    return ((Net*)net)->load_param(_mem);
+#else
+    return -1;
+#endif
+}
+
+int ncnn_net_load_model_mem(ncnn_net_t net, const void* mem)
+{
+#if NCNN_STDIO && NCNN_STRING
+    const unsigned char* _mem = (const unsigned char*)mem;
+    return ((Net*)net)->load_model(_mem);
+#else
+    return -1;
+#endif
+}
+
 int ncnn_net_get_layer_count(ncnn_net_t net)
 {
     return (int)((Net*)net)->layers.size();
