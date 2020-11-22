@@ -317,7 +317,10 @@ endif()
 add_dependencies(ncnn ncnn-generate-spirv)
 
 if(NCNN_INSTALL_SDK)
-    install(TARGETS ncnn EXPORT ncnn ARCHIVE DESTINATION lib)
+    install(TARGETS ncnn
+	    EXPORT ncnn
+	    ARCHIVE DESTINATION lib
+	    LIBRARY DESTINATION lib)
     install(FILES
         allocator.h
         benchmark.h

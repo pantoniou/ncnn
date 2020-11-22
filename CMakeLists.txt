@@ -146,6 +146,15 @@ if(NCNN_VULKAN)
                 include("${GLSLANG_TARGET_DIR}/HLSLTargets.cmake")
             endif()
             include("${GLSLANG_TARGET_DIR}/glslangTargets.cmake")
+
+	    # optional borked on Jetson
+            if(EXISTS "${GLSLANG_TARGET_DIR}/SPIRV-Tools/SPIRV-ToolsTarget.cmake")
+                include("${GLSLANG_TARGET_DIR}/SPIRV-Tools/SPIRV-ToolsTarget.cmake")
+            endif()
+            if(EXISTS "${GLSLANG_TARGET_DIR}/SPIRV-Tools-opt/SPIRV-Tools-optTargets.cmake")
+                include("${GLSLANG_TARGET_DIR}/SPIRV-Tools-opt/SPIRV-Tools-optTargets.cmake")
+            endif()
+
             include("${GLSLANG_TARGET_DIR}/SPIRVTargets.cmake")
 
             if (NOT TARGET glslang OR NOT TARGET SPIRV)
