@@ -186,8 +186,6 @@ if(NCNN_VULKAN)
 
         find_package(Threads)
 
-        include("${GLSLANG_TARGET_DIR}/glslangTargets.cmake")
-
         include("${GLSLANG_TARGET_DIR}/OSDependentTargets.cmake")
         include("${GLSLANG_TARGET_DIR}/OGLCompilerTargets.cmake")
         if(EXISTS "${GLSLANG_TARGET_DIR}/HLSLTargets.cmake")
@@ -203,6 +201,7 @@ if(NCNN_VULKAN)
             include("${GLSLANG_TARGET_DIR}/SPIRV-Tools-opt/SPIRV-Tools-optTargets.cmake")
         endif()
         include("${GLSLANG_TARGET_DIR}/SPIRVTargets.cmake")
+        include("${GLSLANG_TARGET_DIR}/glslangTargets.cmake")
 
         if (NOT TARGET glslang OR NOT TARGET SPIRV)
             message(WARNING "glslang or SPIRV target not found! NCNN_SYSTEM_GLSLANG will be turned off.")
