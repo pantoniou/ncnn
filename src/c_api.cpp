@@ -312,6 +312,7 @@ int ncnn_net_load_model(ncnn_net_t net, const char* path)
 #endif
 }
 
+#if 0
 int ncnn_net_load_param_mem(ncnn_net_t net, const void *mem)
 {
 #if NCNN_STDIO && NCNN_STRING
@@ -331,6 +332,7 @@ int ncnn_net_load_model_mem(ncnn_net_t net, const void* mem)
     return -1;
 #endif
 }
+#endif
 
 int ncnn_net_get_layer_count(ncnn_net_t net)
 {
