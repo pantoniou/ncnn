@@ -24,7 +24,7 @@ endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS "3.02")
     cmake_policy(SET CMP0048 NEW)
-    project(ncnn VERSION 1.0.0)	# version number
+    project(ncnn VERSION 1.0.0) # version number
 else()
     project(ncnn)
 endif()
@@ -128,40 +128,87 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
     endif()
 endif()
 
+function(find_target TARGET)
+    set(UPPER_TARGET "${TARGET}")
+    string(TOUPPER "${TARGET}" UPPER_TARGET)
+    set(TARGET_VAR "${UPPER_TARGET}_TARGET_DIR")
+    set(TARGET_DIR "-NOTFOUND")
+
+    if (LINUX)
+        find_path(TARGET_DIR
+                      NAMES "${TARGET}Targets.cmake"
+                      PATH_SUFFIXES
+                        "lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/${TARGET}"
+                        "lib/${CMAKE_LIBRARY_ARCHITECTURE}/${TARGET}"
+                        "lib/${CMAKE_LIBRARY_ARCHITECTURE}/${TARGET}/cmake"
+                        "lib/${CMAKE_LIBRARY_ARCHITECTURE}/${TARGET}/CMake"
+                        "lib/cmake/${TARGET}"
+                        "lib/${TARGET}"
+                        "lib/${TARGET}/cmake"
+                        "lib/${TARGET}/CMake"
+                        "share/cmake/${TARGET}"
+                        "share/${TARGET}"
+                        "share/${TARGET}/cmake"
+                        "share/${TARGET}/CMake")
+
+        # message(STATUS "TARGET=${TARGET}")
+        # message(STATUS "UPPER_TARGET=${UPPER_TARGET}")
+        # message(STATUS "TARGET_VAR=${TARGET_VAR}")
+
+    else()
+        # not-done for anything else
+    endif()
+
+    set(${TARGET_VAR} "${TARGET_DIR}" PARENT_SCOPE)
+
+endfunction()
+
+
 if(NCNN_VULKAN)
     if(NCNN_SYSTEM_GLSLANG)
         set(GLSLANG_TARGET_DIR "GLSLANG-NOTFOUND" CACHE PATH "Absolute path to glslangTargets.cmake directory")
-        if(NOT GLSLANG_TARGET_DIR AND NOT DEFINED ENV{GLSLANG_TARGET_DIR})
-            message(WARNING "GLSLANG_TARGET_DIR must be defined! NCNN_SYSTEM_GLSLANG will be turned off.")
-            set(NCNN_SYSTEM_GLSLANG OFF)
-        else()
-            message(STATUS "Using glslang install located at ${GLSLANG_TARGET_DIR}")
 
-            find_package(Threads)
+        if(LINUX AND NOT GLSLANG_TARGET_DIR AND NOT DEFINED ENV{GLSLANG_TARGET_DIR})
+            # find the target
+            find_target(glslang)
 
-            include("${GLSLANG_TARGET_DIR}/OSDependentTargets.cmake")
-            include("${GLSLANG_TARGET_DIR}/OGLCompilerTargets.cmake")
-            if(EXISTS "${GLSLANG_TARGET_DIR}/HLSLTargets.cmake")
-                # hlsl support can be optional
-                include("${GLSLANG_TARGET_DIR}/HLSLTargets.cmake")
-            endif()
-            include("${GLSLANG_TARGET_DIR}/glslangTargets.cmake")
-
-	    # optional borked on Jetson
-            if(EXISTS "${GLSLANG_TARGET_DIR}/SPIRV-Tools/SPIRV-ToolsTarget.cmake")
-                include("${GLSLANG_TARGET_DIR}/SPIRV-Tools/SPIRV-ToolsTarget.cmake")
-            endif()
-            if(EXISTS "${GLSLANG_TARGET_DIR}/SPIRV-Tools-opt/SPIRV-Tools-optTargets.cmake")
-                include("${GLSLANG_TARGET_DIR}/SPIRV-Tools-opt/SPIRV-Tools-optTargets.cmake")
-            endif()
-
-            include("${GLSLANG_TARGET_DIR}/SPIRVTargets.cmake")
-
-            if (NOT TARGET glslang OR NOT TARGET SPIRV)
-                message(WARNING "glslang or SPIRV target not found! NCNN_SYSTEM_GLSLANG will be turned off.")
-                set(NCNN_SYSTEM_GLSLANG OFF)
+            if(GLSLANG_TARGET_DIR)
+                message(STATUS "found GLSLANG_TARGET_DIR=${GLSLANG_TARGET_DIR}")
             endif()
         endif()
+    endif()
+
+    if(NOT GLSLANG_TARGET_DIR AND NOT DEFINED ENV{GLSLANG_TARGET_DIR})
+        message(WARNING "GLSLANG_TARGET_DIR must be defined! NCNN_SYSTEM_GLSLANG will be turned off.")
+        set(NCNN_SYSTEM_GLSLANG OFF)
+    else()
+        message(STATUS "Using glslang install located at ${GLSLANG_TARGET_DIR}")
+
+        find_package(Threads)
+
+        include("${GLSLANG_TARGET_DIR}/glslangTargets.cmake")
+
+        include("${GLSLANG_TARGET_DIR}/OSDependentTargets.cmake")
+        include("${GLSLANG_TARGET_DIR}/OGLCompilerTargets.cmake")
+        if(EXISTS "${GLSLANG_TARGET_DIR}/HLSLTargets.cmake")
+            # hlsl support can be optional
+            include("${GLSLANG_TARGET_DIR}/HLSLTargets.cmake")
+        endif()
+
+        # not present on all installations
+        if(EXISTS "${GLSLANG_TARGET_DIR}/SPIRV-Tools/SPIRV-ToolsTarget.cmake")
+            include("${GLSLANG_TARGET_DIR}/SPIRV-Tools/SPIRV-ToolsTarget.cmake")
+        endif()
+        if(EXISTS "${GLSLANG_TARGET_DIR}/SPIRV-Tools-opt/SPIRV-Tools-optTargets.cmake")
+            include("${GLSLANG_TARGET_DIR}/SPIRV-Tools-opt/SPIRV-Tools-optTargets.cmake")
+        endif()
+        include("${GLSLANG_TARGET_DIR}/SPIRVTargets.cmake")
+
+        if (NOT TARGET glslang OR NOT TARGET SPIRV)
+            message(WARNING "glslang or SPIRV target not found! NCNN_SYSTEM_GLSLANG will be turned off.")
+            set(NCNN_SYSTEM_GLSLANG OFF)
+        endif()
+
     endif()
 
     if(NOT NCNN_SYSTEM_GLSLANG)
@@ -256,6 +303,12 @@ if(LINUX AND NCNN_PKGCONFIG)
         @ONLY)
     install(
         FILES "${CMAKE_BINARY_DIR}/ncnn.pc"
-	DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
     )
 endif()
+
+# get_cmake_property(_variableNames VARIABLES)
+# list (SORT _variableNames)
+# foreach (_variableName ${_variableNames})
+#     message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()
