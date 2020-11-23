@@ -186,8 +186,8 @@ if(NCNN_VULKAN)
 
         find_package(Threads)
 
-        include("${GLSLANG_TARGET_DIR}/OSDependentTargets.cmake")
         include("${GLSLANG_TARGET_DIR}/OGLCompilerTargets.cmake")
+        include("${GLSLANG_TARGET_DIR}/OSDependentTargets.cmake")
         if(EXISTS "${GLSLANG_TARGET_DIR}/HLSLTargets.cmake")
             # hlsl support can be optional
             include("${GLSLANG_TARGET_DIR}/HLSLTargets.cmake")
@@ -200,6 +200,7 @@ if(NCNN_VULKAN)
         if(EXISTS "${GLSLANG_TARGET_DIR}/SPIRV-Tools-opt/SPIRV-Tools-optTargets.cmake")
             include("${GLSLANG_TARGET_DIR}/SPIRV-Tools-opt/SPIRV-Tools-optTargets.cmake")
         endif()
+        include("${GLSLANG_TARGET_DIR}/glslangTargets.cmake")
         include("${GLSLANG_TARGET_DIR}/SPIRVTargets.cmake")
         include("${GLSLANG_TARGET_DIR}/glslangTargets.cmake")
 
