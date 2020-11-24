@@ -17,6 +17,9 @@
 #define NCNN_C_API_H
 
 #include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "platform.h"
 
 #ifdef __cplusplus
@@ -73,6 +76,30 @@ void ncnn_option_set_num_threads(ncnn_option_t opt, int num_threads);
 
 int ncnn_option_get_use_vulkan_compute(ncnn_option_t opt);
 void ncnn_option_set_use_vulkan_compute(ncnn_option_t opt, int use_vulkan_compute);
+
+#define NCNN_OPTION_DECLARE(_type, _name) \
+    _type ncnn_option_get_ ## _name (ncnn_option_t opt); \
+    void ncnn_option_set_ ## _name (ncnn_option_t opt, _type value); \
+    struct useless_struct_to_consume_semicolon
+
+NCNN_OPTION_DECLARE(bool, lightmode);
+NCNN_OPTION_DECLARE(int, openmp_blocktime);
+NCNN_OPTION_DECLARE(bool, use_winograd_convolution);
+NCNN_OPTION_DECLARE(bool, use_sgemm_convolution);
+NCNN_OPTION_DECLARE(bool, use_int8_inference);
+NCNN_OPTION_DECLARE(bool, use_fp16_packed);
+NCNN_OPTION_DECLARE(bool, use_fp16_storage);
+NCNN_OPTION_DECLARE(bool, use_fp16_arithmetic);
+NCNN_OPTION_DECLARE(bool, use_int8_storage);
+NCNN_OPTION_DECLARE(bool, use_int8_arithmetic);
+NCNN_OPTION_DECLARE(bool, use_packing_layout);
+NCNN_OPTION_DECLARE(bool, use_shader_pack8);
+NCNN_OPTION_DECLARE(bool, use_subgroup_basic);
+NCNN_OPTION_DECLARE(bool, use_subgroup_vote);
+NCNN_OPTION_DECLARE(bool, use_subgroup_ballot);
+NCNN_OPTION_DECLARE(bool, use_subgroup_shuffle);
+NCNN_OPTION_DECLARE(bool, use_image_storage);
+NCNN_OPTION_DECLARE(bool, use_weight_fp16_storage);
 
 /* blob api */
 typedef struct __ncnn_blob_t* ncnn_blob_t;

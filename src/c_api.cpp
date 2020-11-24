@@ -182,6 +182,36 @@ void ncnn_option_set_use_vulkan_compute(ncnn_option_t opt, int use_vulkan_comput
 #endif
 }
 
+#define NCNN_OPTION_DEFINE(_type, _name) \
+    _type ncnn_option_get_ ## _name (ncnn_option_t opt) \
+    { \
+        return ((Option*)opt)-> _name ; \
+    } \
+    void ncnn_option_set_ ## _name (ncnn_option_t opt, _type value) \
+    { \
+        ((Option*)opt)-> _name = value; \
+    } \
+    struct useless_struct_to_consume_semicolon
+
+NCNN_OPTION_DEFINE(bool, lightmode);
+NCNN_OPTION_DEFINE(int, openmp_blocktime);
+NCNN_OPTION_DEFINE(bool, use_winograd_convolution);
+NCNN_OPTION_DEFINE(bool, use_sgemm_convolution);
+NCNN_OPTION_DEFINE(bool, use_int8_inference);
+NCNN_OPTION_DEFINE(bool, use_fp16_packed);
+NCNN_OPTION_DEFINE(bool, use_fp16_storage);
+NCNN_OPTION_DEFINE(bool, use_fp16_arithmetic);
+NCNN_OPTION_DEFINE(bool, use_int8_storage);
+NCNN_OPTION_DEFINE(bool, use_int8_arithmetic);
+NCNN_OPTION_DEFINE(bool, use_packing_layout);
+NCNN_OPTION_DEFINE(bool, use_shader_pack8);
+NCNN_OPTION_DEFINE(bool, use_subgroup_basic);
+NCNN_OPTION_DEFINE(bool, use_subgroup_vote);
+NCNN_OPTION_DEFINE(bool, use_subgroup_ballot);
+NCNN_OPTION_DEFINE(bool, use_subgroup_shuffle);
+NCNN_OPTION_DEFINE(bool, use_image_storage);
+NCNN_OPTION_DEFINE(bool, use_weight_fp16_storage);
+
 /* blob api */
 const char* ncnn_blob_get_name(ncnn_blob_t blob)
 {
