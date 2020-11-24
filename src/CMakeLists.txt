@@ -161,8 +161,8 @@ if(BUILD_SHARED_LIBS)
     add_library(ncnn SHARED ${ncnn_SRCS})
 else()
     add_library(ncnn STATIC ${ncnn_SRCS})
+    set_target_properties(ncnn PROPERTIES DEBUG_POSTFIX "d")
 endif()
-set_target_properties(ncnn PROPERTIES DEBUG_POSTFIX "d")
 
 if(NCNN_SIMPLESTL)
     # link math lib explicitly
