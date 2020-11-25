@@ -46,6 +46,7 @@ size_t ncnn_mat_get_elemsize(ncnn_mat_t mat);
 int ncnn_mat_get_elempack(ncnn_mat_t mat);
 size_t ncnn_mat_get_cstep(ncnn_mat_t mat);
 void* ncnn_mat_get_data(ncnn_mat_t mat);
+void* ncnn_mat_get_channel_data(ncnn_mat_t mat, int _c);
 
 #if NCNN_PIXEL
 

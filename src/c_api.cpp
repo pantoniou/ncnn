@@ -111,6 +111,11 @@ void* ncnn_mat_get_data(ncnn_mat_t mat)
     return ((Mat*)mat)->data;
 }
 
+void* ncnn_mat_get_channel_data(ncnn_mat_t mat, int _c)
+{
+	return ((Mat*)mat)->channel(_c);
+}
+
 #if NCNN_PIXEL
 
 /* mat pixel api */
