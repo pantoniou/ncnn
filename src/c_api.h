@@ -160,6 +160,21 @@ void ncnn_extractor_set_option(ncnn_extractor_t ex, ncnn_option_t opt);
 int ncnn_extractor_input(ncnn_extractor_t ex, const char* name, ncnn_mat_t mat);
 int ncnn_extractor_extract(ncnn_extractor_t ex, const char* name, ncnn_mat_t* mat);
 
+#if NCNN_PIXEL
+void ncnn_yuv420sp2rgb(const unsigned char* yuv420sp, int w, int h, unsigned char* rgb);
+void ncnn_yuv420sp2rgb_nv12(const unsigned char* yuv420sp, int w, int h, unsigned char* rgb);
+void ncnn_yuv420sp2rgb_half(const unsigned char* yuv420sp, int w, int h, unsigned char* rgb);
+void ncnn_resize_bilinear_c1(const unsigned char* src, int srcw, int srch, unsigned char* dst, int w, int h);
+void ncnn_resize_bilinear_c2(const unsigned char* src, int srcw, int srch, unsigned char* dst, int w, int h);
+void ncnn_resize_bilinear_c3(const unsigned char* src, int srcw, int srch, unsigned char* dst, int w, int h);
+void ncnn_resize_bilinear_c4(const unsigned char* src, int srcw, int srch, unsigned char* dst, int w, int h);
+void ncnn_resize_bilinear_c1_stride(const unsigned char* src, int srcw, int srch, int srcstride, unsigned char* dst, int w, int h, int stride);
+void ncnn_resize_bilinear_c2_stride(const unsigned char* src, int srcw, int srch, int srcstride, unsigned char* dst, int w, int h, int stride);
+void ncnn_resize_bilinear_c3_stride(const unsigned char* src, int srcw, int srch, int srcstride, unsigned char* dst, int w, int h, int stride);
+void ncnn_resize_bilinear_c4_stride(const unsigned char* src, int srcw, int srch, int srcstride, unsigned char* dst, int w, int h, int stride);
+void ncnn_resize_bilinear_yuv420sp(const unsigned char* src, int srcw, int srch, unsigned char* dst, int w, int h);
+#endif // NCNN_PIXEL
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
